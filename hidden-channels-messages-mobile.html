@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Vendetta Mobile - Hidden Channels Messages</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.27.2/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/C10udburst-Discord/vendetta-plugins@main/builds(hidden-channels-v2)/script.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@3.3.1/src/css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/C10udburst-Discord/vendetta-plugins@main/builds(hidden-channels-v2)/style.css">
+</head>
+<body>
+    <div id="app" class="flex flex-col items-center justify-center min-h-screen">
+        <div class="text-2xl font-bold mb-4">Hidden Channels Messages</div>
+        <div v-if="loading" class="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full"></div>
+        <div v-else>
+            <div v-for="channel in channels" class="mb-4">
+                <div class="text-xl font-bold"># {{ channel.name }}</div>
+                <div v-for="message in channel.messages" class="p-2 border rounded">
+                    <div class="flex items-center">
+                        <img :src="message.author.avatar" class="w-8 h-8 rounded-full mr-2">
+                        <div class="font-semibold">{{ message.author.username }}</div>
+                    </div>
+                    <div class="mt-1">{{ message.content }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                loading: true,
+                channels: []
+            },
+            async mounted() {
+                try {
+                    const response = await axios.get('https://api.vendetta-plugins.c10udburst.xyz/messages');
+                    this.channels = response.data;
+                } catch (error) {
+                    console.error('Failed to load messages:', error);
+                }
+                this.loading = false;
+            }
+        });
+    </script>
+</body>
+</html>
